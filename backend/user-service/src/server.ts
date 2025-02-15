@@ -1,22 +1,22 @@
-import express, { Request, Response } from 'express';
+import express from "express";
+import { AppDataSource } from "./data-source";
+import userRoutes from "./Routes/User";
 
 const app = express();
 const port = 3000;
 
-// Middleware to parse JSON bodies
 app.use(express.json());
 
-// Sample API route with proper types for `req` and `res`
-app.get('/', (request: any, response: Response) => {
-  response.send('Hello, World!');
-});
+// Initialize database connection
+AppDataSource.initialize()
+  .then(() => {
+    console.log("Database connected");
+  })
+  .catch((error: Error) => console.log("Error connecting to the database", error));
 
-// // Another API route with proper types for `req` and `res`
-// app.get('/api/greet', (req: Request, res: Response) => {
-//   res.json({ message: 'Hello , from the API!' });
-// });
+// Mount routes
+app.use("/api", userRoutes);
 
-// Start the server
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
