@@ -20,26 +20,24 @@ export class UserService {
   }
 
   async getAllUsers(
-    page: number, 
-    pageSize: number, 
-    sortBy: string, 
-    sortOrder: 'ASC' | 'DESC'
+    page: number,
+    pageSize: number,
+    sortBy: string,
+    sortOrder: "ASC" | "DESC"
   ): Promise<{ users: UserResponseDto[]; total: number }> {
     const [users, total] = await this.userRepository.findAndCount({
       order: {
-        [sortBy]: sortOrder
+        [sortBy]: sortOrder,
       },
       skip: (page - 1) * pageSize,
-      take: pageSize
+      take: pageSize,
     });
-  
-    return { 
-      users: users.map(this.toUserDto), 
-      total 
+
+    return {
+      users: users.map(this.toUserDto),
+      total,
     };
   }
-  
-
 
   async updateUser(
     id: number,
@@ -67,10 +65,7 @@ export class UserService {
 
   async searchUsers(query: string): Promise<UserResponseDto[]> {
     const users = await this.userRepository.find({
-      where: [
-        { name: ILike(`%${query}%`) },
-        { email: ILike(`%${query}%`) }
-      ]
+      where: [{ name: ILike(`%${query}%`) }, { email: ILike(`%${query}%`) }],
     });
     return users.map(this.toUserDto);
   }
@@ -85,7 +80,6 @@ export class UserService {
     const updatedUser = await this.userRepository.save(user);
     return this.toUserDto(updatedUser);
   }
-  
 
   async blockUser(id: number): Promise<UserResponseDto> {
     const user = await this.userRepository.findOneBy({ id });
